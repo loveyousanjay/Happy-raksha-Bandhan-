@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>रक्षाबंधन की शुभकामनाएँ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tiro+Hindi&display=swap');
+
+        body {
+            font-family: 'Tiro Hindi', serif;
+            text-align: center;
+            background: linear-gradient(to right, #6d28d9, #4c1d95);
+            margin: 0;
+            /* विज्ञापनों के लिए जगह बनाने हेतु ऊपर और नीचे पैडिंग */
+            padding: 80px 20px; 
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- विज्ञापन कंटेनर का स्टाइल --- */
+        .ad-container {
+            position: fixed; /* स्क्रीन पर स्थिर रखें */
+            left: 0;
+            width: 100%;
+            z-index: 2000; /* इसे सबसे ऊपर दिखाएँ */
+            background-color: #f0f0f0; /* विज्ञापन के पीछे का रंग */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60px; /* विज्ञापन की न्यूनतम ऊंचाई */
+        }
+        .ad-container.top {
+            top: 0; /* ऊपर चिपकाएँ */
+            border-bottom: 1px solid #ccc;
+        }
+        .ad-container.bottom {
+            bottom: 0; /* नीचे चिपकाएँ */
+            border-top: 1px solid #ccc;
+        }
+        /* --- विज्ञापन स्टाइल समाप्त --- */
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 2px solid #fff;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #d83b64;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 2px #8b5cf6;
+        }
+
+        #greetingMessage {
+            font-size: 1.5em;
+            color: #4c1d95;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 15px;
+            border: 3px solid #d83b64;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .input-container {
+            margin-top: 30px;
+        }
+
+        #nameInput {
+            padding: 12px;
+            width: 80%;
+            max-width: 350px;
+            border: none;
+            border-bottom: 3px solid #8b5cf6;
+            background-color: transparent;
+            font-size: 1.2em;
+            font-family: 'Tiro Hindi', serif;
+            color: #4c1d95;
+            text-align: center;
+        }
+
+        #nameInput::placeholder {
+            color: #a78bfa;
+        }
+        
+        #nameInput:focus {
+            outline: none;
+            border-bottom-color: #d83b64;
+        }
+
+        .whatsapp-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #25d366, #128c7e);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: 'Tiro Hindi', serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .whatsapp-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        .confetti, .gift {
+            position: absolute;
+            top: -50px;
+            z-index: 1000;
+            opacity: 0.9;
+        }
+
+        .confetti {
+            width: 10px;
+            height: 20px;
+            animation: fall 5s linear infinite;
+        }
+        
+        .gift {
+            font-size: 2em;
+            animation: fall-gift 8s linear infinite;
+        }
+
+        @keyframes fall {
+            from { transform: translateY(0) rotate(0); }
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fall-gift {
+            from { transform: translateY(0) rotate(0); }
+            to {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ======== ऊपर का विज्ञापन ======== -->
+    <div class="ad-container top">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : 'f930e98e18536f6e8070bb95bbcdbb08',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/f930e98e18536f6e8070bb95bbcdbb08/invoke.js"></script>
+    </div>
+    <!-- ================================ -->
+
+
+    <!-- मुख्य कंटेंट -->
+    <div class="container">
+        <h1>रक्षाबंधन की शुभकामनाएँ!</h1>
+        <p id="greetingMessage"></p>
+        
+        <img src="happy-rakhi-gif.gif" alt="Happy Rakhi GIF">
+
+        <div class="input-container">
+            <p><strong>अपना नाम लिखें और शुभकामनाएँ भेजें:</strong></p>
+            <input type="text" id="nameInput" placeholder="यहाँ अपना नाम लिखें">
+            <br>
+            <button class="whatsapp-button" onclick="shareOnWhatsApp()">
+                व्हाट्सएप पर भेजें 🚀
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ======== नीचे का विज्ञापन ======== -->
+    <div class="ad-container bottom">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : 'f930e98e18536f6e8070bb95bbcdbb08',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/f930e98e18536f6e8070bb95bbcdbb08/invoke.js"></script>
+    </div>
+    <!-- ================================= -->
+
+
+    <script>
+        window.onload = function() {
+            createCelebrationEffects();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromName = urlParams.get('name');
+            const greetingMessage = document.getElementById('greetingMessage');
+
+            if (fromName) {
+                greetingMessage.textContent = `${decodeURIComponent(fromName)} की तरफ से आपको रक्षाबंधन की हार्दिक शुभकामनाएँ!`;
+            } else {
+                greetingMessage.textContent = "आपको रक्षाबंधन की हार्दिक शुभकामनाएँ!";
+            }
+        };
+        
+        function createCelebrationEffects() {
+            const container = document.body;
+
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                const colors = ['#d83b64', '#ffc0cb', '#ffd700', '#8b5cf6', '#fff'];
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(confetti);
+            }
+
+            for (let i = 0; i < 20; i++) {
+                const gift = document.createElement('div');
+                gift.classList.add('gift');
+                gift.innerHTML = '🎁';
+                gift.style.left = Math.random() * 100 + 'vw';
+                gift.style.animationDelay = Math.random() * 8 + 's';
+                gift.style.animationDuration = (Math.random() * 5 + 7) + 's';
+                container.appendChild(gift);
+            }
+        }
+
+        function shareOnWhatsApp() {
+            const nameInput = document.getElementById('nameInput');
+            const yourName = nameInput.value.trim();
+
+            if (yourName === "") {
+                alert("कृपया अपना नाम दर्ज करें!");
+                return;
+            }
+
+            const baseUrl = window.location.href.split('?')[0];
+            const newUrl = `${baseUrl}?name=${encodeURIComponent(yourName)}`;
+            
+            const message = `✨ *${yourName}* की तरफ से आपको और आपके परिवार को रक्षाबंधन की हार्दिक शुभकामनाएँ! ✨\n\nकृपया नीचे दिए गए लिंक पर क्लिक करके अपनी शुभकामनाएँ प्राप्त करें: 👇\n\n${newUrl}`;
+            
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+
+</body>
+</html>
