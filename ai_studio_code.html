@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n-key="page_title">व्यक्तित्व परीक्षण</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --primary-light: #e8f9fd;
+            --text-color: #34495e;
+            --light-gray: #dde4e9;
+            --white: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --whatsapp-green: #25D366;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .lang-switcher {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 5px;
+            z-index: 1000;
+        }
+
+        .lang-switcher button {
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .lang-switcher button:hover {
+            background-color: var(--primary-light);
+        }
+
+        .lang-switcher button.active {
+            background-color: var(--secondary-color);
+            color: var(--white);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background-color: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        #start-screen .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .test-length-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .test-length-btn {
+            background: var(--white);
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .test-length-btn:hover {
+            background: var(--secondary-color);
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.4);
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--light-gray);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 20px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            line-height: 20px;
+            transition: width 0.4s ease-in-out;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .question-block.active {
+            display: block;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .options-grid input[type="radio"] {
+            display: none;
+        }
+
+        .options-grid label {
+            display: block;
+            background-color: var(--white);
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .options-grid label:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .options-grid input[type="radio"]:checked + label {
+            background-color: var(--primary-light);
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        #resultBtnContainer, #result {
+            display: none;
+        }
+        
+        #result-type {
+            font-size: 5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+        }
+
+        #result-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        #result-tagline {
+            font-style: italic;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        #result-desc {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+        
+        #result-chars ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+        
+        #result-chars ul li {
+            background-color: var(--primary-light);
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        #share-section {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed var(--light-gray);
+            border-radius: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        #share-section h3 {
+             margin-bottom: 15px;
+             font-weight: 600;
+        }
+
+        #userName {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        #shareBtn {
+            background: var(--whatsapp-green);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #shareBtn:hover {
+            opacity: 0.9;
+        }
+        
+        #shareBtn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-switcher">
+        <button id="lang-hi">हिन्दी</button>
+        <button id="lang-en">English</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1 data-i18n-key="header_title"></h1>
+            <p data-i18n-key="header_subtitle"></p>
+        </header>
+
+        <div id="start-screen">
+            <div class="icon">🧠</div>
+            <h2 data-i18n-key="start_title"></h2>
+            <p data-i18n-key="start_desc"></p>
+            <p><strong data-i18n-key="start_select_label"></strong></p>
+            <div class="test-length-selector">
+                <button class="test-length-btn" data-questions="10">10 <span data-i18n-key="questions_label"></span></button>
+                <button class="test-length-btn" data-questions="20">20 <span data-i18n-key="questions_label"></span></button>
+                <button class="test-length-btn" data-questions="30">30 <span data-i18n-key="questions_label"></span></button>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <form id="quizForm"></form>
+        
+        <div id="resultBtnContainer">
+            <button class="btn" id="viewResultsBtn" data-i18n-key="view_results_button"></button>
+        </div>
+
+        <div id="result">
+            <h2 data-i18n-key="result_heading"></h2>
+            <div id="result-type"></div>
+            <div id="result-title"></div>
+            <p id="result-tagline"></p>
+            <p id="result-desc"></p>
+            <div id="result-chars"></div>
+            
+            <div id="share-section">
+                <h3 data-i18n-key="share_section_heading"></h3>
+                <input type="text" id="userName" data-i18n-placeholder-key="name_placeholder">
+                <button id="shareBtn">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.61 15.35 3.48 16.81L2 22L7.33 20.58C8.75 21.36 10.36 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 9.27 20.92 6.83 19.05 4.96C17.18 3.09 14.74 2 12.04 2M12.04 3.67C16.56 3.67 20.28 7.39 20.28 11.91C20.28 16.43 16.56 20.15 12.04 20.15C10.56 20.15 9.14 19.74 7.92 19.01L7.54 18.78L4.43 19.65L5.33 16.61L5.09 16.22C4.26 14.91 3.8 13.43 3.8 11.91C3.8 7.39 7.52 3.67 12.04 3.67M17.36 14.93C17.11 15.54 16.13 16.04 15.53 16.16C15.03 16.27 14.34 16.3 14.04 16.24C13.59 16.17 12.78 15.91 11.83 15.01C10.68 13.91 9.94 12.59 9.77 12.28C9.61 11.97 9.03 11.12 9.03 10.22C9.03 9.32 9.53 8.82 9.74 8.61C9.95 8.4 10.22 8.35 10.43 8.35C10.6 8.35 10.74 8.35 10.88 8.35C11.01 8.35 11.23 8.38 11.41 8.88C11.59 9.38 12.06 10.58 12.15 10.7C12.24 10.82 12.29 10.95 12.23 11.08C12.17 11.21 12.14 11.27 11.97 11.44C11.8 11.61 11.69 11.71 11.56 11.83C11.43 11.94 11.3 12.04 11.45 12.29C11.6 12.54 12.08 13.29 12.78 13.94C13.62 14.72 14.34 15.06 14.59 15.18C14.84 15.3 15.06 15.28 15.23 15.08C15.44 14.84 15.7 14.45 15.87 14.17C16.04 13.89 16.27 13.84 16.54 13.93C16.81 14.02 17.75 14.53 17.92 14.7C18.09 14.87 18.2 15 18.14 15.17C18.08 15.34 17.61 14.32 17.36 14.93Z"></path></svg>
+                    <span data-i18n-key="share_button"></span>
+                </button>
+            </div>
+            
+            <div class="reset-button-container">
+                 <button class="btn" id="resetBtn" data-i18n-key="start_over_button"></button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    'use strict';
+    document.addEventListener('DOMContentLoaded', () => {
+
+    // Global state variables
+    let currentLang = 'hi';
+    let currentQuestionIndex = 0;
+    let TOTAL_QUESTIONS = 0;
+    let userResult = {};
+    let selectedQuestions = [];
+
+    // --- DATA OBJECTS (Corrected Syntax) ---
+    const i18n = {
+        en: {
+            page_title: "Personality Test",
+            header_title: "Personality Test",
+            header_subtitle: "Find your type among the 16 personalities.",
+            start_title: "Start Your Test",
+            start_desc: "Answer a few questions and find out what your personality is like.",
+            start_select_label: "Select Test Length:",
+            questions_label: "Questions",
+            view_results_button: "View Results",
+            result_heading: "Your Personality Type is:",
+            share_section_heading: "Share with Friends",
+            name_placeholder: "Enter your name (optional)",
+            share_button: "Share on WhatsApp",
+            start_over_button: "Start Over",
+            quiz_in_progress_confirm: "Changing the language will restart this test. Do you want to continue?",
+            incomplete_quiz_alert: "Please answer all questions before viewing the results.",
+            option_strongly_agree: "Strongly Agree",
+            option_agree: "Agree",
+            option_disagree: "Disagree",
+            option_strongly_disagree: "Strongly Disagree"
+        },
+        hi: {
+            page_title: "व्यक्तित्व परीक्षण",
+            header_title: "व्यक्तित्व परीक्षण",
+            header_subtitle: "16 तरह के व्यक्तित्व में से अपना प्रकार जानें।",
+            start_title: "अपना टेस्ट शुरू करें",
+            start_desc: "कुछ सवालों के जवाब दें और जानें कि आपका व्यक्तित्व कैसा है।",
+            start_select_label: "टेस्ट की लंबाई चुनें:",
+            questions_label: "सवाल",
+            view_results_button: "नतीजा देखें",
+            result_heading: "आपका व्यक्तित्व इस प्रकार का है:",
+            share_section_heading: "दोस्तों के साथ शेयर करें",
+            name_placeholder: "अपना नाम लिखें (ज़रूरी नहीं)",
+            share_button: "WhatsApp पर शेयर करें",
+            start_over_button: "फिर से शुरू करें",
+            quiz_in_progress_confirm: "भाषा बदलने पर यह टेस्ट फिर से शुरू हो जाएगा। क्या आप जारी रखना चाहते हैं?",
+            incomplete_quiz_alert: "कृपया नतीजे देखने से पहले सभी सवालों के जवाब दें।",
+            option_strongly_agree: "पूरी तरह सहमत",
+            option_agree: "सहमत",
+            option_disagree: "असहमत",
+            option_strongly_disagree: "पूरी तरह असहमत"
+        }
+    };
+
+    const personalityTypes = {
+        "ISTJ": { "title": { "en": "The Inspector", "hi": "निरीक्षक" }, "tagline": { "en": "Practical and fact-minded individuals, whose reliability cannot be doubted.", "hi": "व्यावहारिक और भरोसेमंद लोग, जो हमेशा सच का साथ देते हैं।" }, "desc": { "en": "Inspectors are responsible, dependable, and thorough. They have a deep respect for facts and traditions, and they excel at creating and maintaining order in their personal and professional lives.", "hi": "ये लोग बहुत ज़िम्मेदार और भरोसेमंद होते हैं। इन्हें नियमों और परंपराओं का पालन करना पसंद है। ये अपनी ज़िंदगी और काम में सब कुछ व्यवस्थित रखते हैं।" }, "chars": { "en": ["Responsible", "Detail-oriented", "Loyal", "Systematic"], "hi": ["ज़िम्मेदार", "बारीकी से काम करने वाले", "वफ़ादार", "व्यवस्थित"] } },
+        "ISFJ": { "title": { "en": "The Protector", "hi": "रक्षक" }, "tagline": { "en": "Very dedicated and warm protectors, always ready to defend their loved ones.", "hi": "समर्पित और देखभाल करने वाले रक्षक, जो हमेशा अपनों के लिए खड़े रहते हैं।" }, "desc": { "en": "Protectors are known for their kindness, reliability, and dedication. They are keenly aware of the feelings of others and enjoy helping people in practical ways.", "hi": "ये लोग अपनी दया, भरोसे और लगन के लिए जाने जाते हैं। वे दूसरों की भावनाओं को अच्छी तरह समझते हैं और लोगों की मदद करके खुश होते हैं।" }, "chars": { "en": ["Supportive", "Patient", "Reliable", "Caring"], "hi": ["सहयोगी", "धैर्यवान", "भरोसेमंद", "देखभाल करने वाले"] } },
+        "INFJ": { "title": { "en": "The Advocate", "hi": "सलाहकार" }, "tagline": { "en": "Quiet and mystical, yet very inspiring and tireless idealists.", "hi": "शांत, फिर भी बहुत प्रेरणा देने वाले और आदर्शवादी लोग।" }, "desc": { "en": "Advocates are creative, insightful, and inspiring. They have a deep sense of idealism and integrity, and they are driven to help others and make the world a better place.", "hi": "ये लोग रचनात्मक, समझदार और प्रेरणा देने वाले होते हैं। वे आदर्शों और ईमानदारी को बहुत महत्व देते हैं और दूसरों की मदद करके दुनिया को बेहतर बनाना चाहते हैं।" }, "chars": { "en": ["Idealistic", "Insightful", "Compassionate", "Decisive"], "hi": ["आदर्शवादी", "समझदार", "दयालु", "निर्णय लेने वाले"] } },
+        "INTJ": { "title": { "en": "The Architect", "hi": "रणनीतिकार" }, "tagline": { "en": "Imaginative and strategic thinkers, with a plan for everything.", "hi": "कल्पनाशील और रणनीतिक विचारक, जिनके पास हर चीज़ की योजना होती है।" }, "desc": { "en": "Architects are independent, analytical, and determined. They are driven to turn theories into reality and are always looking for ways to improve themselves and the world around them.", "hi": "ये लोग स्वतंत्र, तार्किक और दृढ़ निश्चयी होते हैं। वे विचारों को हकीकत में बदलना पसंद करते हैं और हमेशा खुद को और दुनिया को बेहतर बनाने के तरीके खोजते हैं।" }, "chars": { "en": ["Strategic", "Independent", "Logical", "Innovative"], "hi": ["रणनीतिक", "स्वतंत्र", "तार्किक", "खोज करने वाले"] } },
+        "ISTP": { "title": { "en": "The Crafter", "hi": "शिल्पकार" }, "tagline": { "en": "Bold and practical experimenters, masters of all kinds of tools.", "hi": "साहसी और व्यावहारिक प्रयोग करने वाले, जो हर तरह के काम में माहिर होते हैं।" }, "desc": { "en": "Crafters are observant, curious, and hands-on. They love to explore and understand how things work, and they are skilled at finding practical solutions to immediate problems.", "hi": "ये लोग जिज्ञासु होते हैं और खुद काम करके सीखना पसंद करते हैं। उन्हें यह जानना अच्छा लगता है कि चीजें कैसे काम करती हैं, और वे समस्याओं का व्यावहारिक हल निकालने में माहिर होते हैं।" }, "chars": { "en": ["Practical", "Action-oriented", "Flexible", "Resourceful"], "hi": ["व्यावहारिक", "काम करने वाले", "लचीले", "जुगाड़ू"] } },
+        "ISFP": { "title": { "en": "The Artist", "hi": "कलाकार" }, "tagline": { "en": "Flexible and charming artists, always ready to explore and experience something new.", "hi": "लचीले और आकर्षक कलाकार, जो हमेशा कुछ नया करने के लिए तैयार रहते हैं।" }, "desc": { "en": "Artists are gentle, sensitive, and spontaneous. They live in the present moment and seek to create beauty and harmony in their environment.", "hi": "कलाकार कोमल, संवेदनशील और सहज होते हैं। वे आज में जीते हैं और अपने आसपास सुंदरता और सद्भाव बनाना चाहते हैं।" }, "chars": { "en": ["Charming", "Artistic", "Spontaneous", "Adaptable"], "hi": ["आकर्षक", "कलात्मक", "सहज", "मिलनसार"] } },
+        "INFP": { "title": { "en": "The Mediator", "hi": "मध्यस्थ" }, "tagline": { "en": "Poetic, kind, and altruistic people, always eager to help a good cause.", "hi": "दयालु और निस्वार्थ लोग, जो हमेशा अच्छे काम के लिए मदद करने को तैयार रहते हैं।" }, "desc": { "en": "Mediators are idealistic, creative, and compassionate. They have a strong sense of personal values and are driven by a desire to understand themselves and their place in the world.", "hi": "मध्यस्थ आदर्शवादी, रचनात्मक और दयालु होते हैं। वे अपने मूल्यों पर चलते हैं और खुद को और दुनिया में अपनी जगह को समझना चाहते हैं।" }, "chars": { "en": ["Empathetic", "Creative", "Idealistic", "Loyal"], "hi": ["सहानुभूति रखने वाले", "रचनात्मक", "आदर्शवादी", "वफ़ादार"] } },
+        "INTP": { "title": { "en": "The Thinker", "hi": "विचारक" }, "tagline": { "en": "Innovative inventors with an unquenchable thirst for knowledge.", "hi": "ज्ञान की कभी न खत्म होने वाली प्यास के साथ नए विचारों वाले आविष्कारक।" }, "desc": { "en": "Thinkers are known for their brilliant theories and unrelenting logic. They are fascinated by patterns and are driven to understand the underlying principles of everything.", "hi": "विचारक अपने बेहतरीन सिद्धांतों और तर्क के लिए जाने जाते हैं। वे हर चीज़ के पीछे के मूल सिद्धांतों को समझने की कोशिश करते हैं।" }, "chars": { "en": ["Analytical", "Abstract", "Objective", "Imaginative"], "hi": ["विश्लेषणात्मक", "अमूर्त सोचने वाले", "निष्पक्ष", "कल्पनाशील"] } },
+        "ESTP": { "title": { "en": "The Entrepreneur", "hi": "उद्यमी" }, "tagline": { "en": "Smart, energetic, and very perceptive people, who truly enjoy living on the edge.", "hi": "स्मार्ट, ऊर्जावान और तेज लोग, जिन्हें जोखिम भरी जिंदगी जीना पसंद है।" }, "desc": { "en": "Entrepreneurs are energetic, action-oriented, and resourceful. They are skilled negotiators and enjoy taking risks to achieve their goals.", "hi": "उद्यमी ऊर्जा से भरपूर होते हैं और काम पर ध्यान देते हैं। वे बातचीत में माहिर होते हैं और अपने लक्ष्यों को पाने के लिए जोखिम उठाने का आनंद लेते हैं।" }, "chars": { "en": ["Energetic", "Sociable", "Perceptive", "Bold"], "hi": ["ऊर्जावान", "मिलनसार", "तेज-तर्रार", "साहसी"] } },
+        "ESFP": { "title": { "en": "The Entertainer", "hi": "मनोरंजक" }, "tagline": { "en": "Spontaneous, energetic, and enthusiastic people – life is never boring around them.", "hi": "सहज, ऊर्जावान और उत्साही लोग - इनके आसपास जीवन कभी उबाऊ नहीं होता।" }, "desc": { "en": "Entertainers are outgoing, playful, and generous. They love to be the center of attention and are skilled at creating a fun and engaging atmosphere.", "hi": "मनोरंजक मिलनसार, चंचल और उदार होते हैं। उन्हें ध्यान का केंद्र बनना पसंद है और वे एक मजेदार माहौल बनाने में माहिर हैं।" }, "chars": { "en": ["Outgoing", "Spontaneous", "Enthusiastic", "Generous"], "hi": ["मिलनसार", "सहज", "उत्साही", "उदार"] } },
+        "ENFP": { "title": { "en": "The Campaigner", "hi": "प्रचारक" }, "tagline": { "en": "Enthusiastic, creative and sociable free spirits, who can always find a reason to smile.", "hi": "उत्साही, रचनात्मक और मिलनसार लोग, जो हमेशा मुस्कुराने की वजह ढूंढ लेते हैं।" }, "desc": { "en": "Campaigners are curious, independent, and compassionate. They are skilled communicators and enjoy connecting with others on a deep level.", "hi": "प्रचारक जिज्ञासु, स्वतंत्र और दयालु होते हैं। वे अच्छे वार्ताकार होते हैं और दूसरों के साथ गहरे स्तर पर जुड़ना पसंद करते हैं।" }, "chars": { "en": ["Enthusiastic", "Creative", "Sociable", "Optimistic"], "hi": ["उत्साही", "रचनात्मक", "मिलनसार", "आशावादी"] } },
+        "ENTP": { "title": { "en": "The Debater", "hi": "विवादी" }, "tagline": { "en": "Smart and curious thinkers who cannot resist an intellectual challenge.", "hi": "स्मार्ट और जिज्ञासु विचारक जो किसी भी बौद्धिक चुनौती का सामना कर सकते हैं।" }, "desc": { "en": "Debaters are innovative, quick-witted, and charismatic. They enjoy exploring new ideas and are skilled at finding creative solutions to complex problems.", "hi": "विवादी नए विचारों वाले, हाजिरजवाब और आकर्षक होते हैं। उन्हें नए विचारों की खोज करना पसंद है और वे जटिल समस्याओं का रचनात्मक समाधान खोजने में माहिर हैं।" }, "chars": { "en": ["Quick-witted", "Innovative", "Charismatic", "Resourceful"], "hi": ["हाजिरजवाब", "नए विचारों वाले", "आकर्षक", "जुगाड़ू"] } },
+        "ESTJ": { "title": { "en": "The Executive", "hi": "कार्यकारी" }, "tagline": { "en": "Excellent administrators, unsurpassed at managing things or people.", "hi": "उत्कृष्ट प्रबंधक, जो चीजों या लोगों को संभालने में बेजोड़ हैं।" }, "desc": { "en": "Executives are organized, efficient, and decisive. They are natural leaders who excel at creating and implementing plans to achieve their goals.", "hi": "कार्यकारी संगठित, कुशल और निर्णायक होते हैं। वे जन्मजात नेता होते हैं जो अपने लक्ष्यों को प्राप्त करने के लिए योजनाएं बनाने और लागू करने में माहिर होते हैं।" }, "chars": { "en": ["Organized", "Efficient", "Decisive", "Direct"], "hi": ["संगठित", "कुशल", "निर्णायक", "स्पष्टवादी"] } },
+        "ESFJ": { "title": { "en": "The Consul", "hi": "परामर्शदाता" }, "tagline": { "en": "Extraordinarily caring, social, and popular people, always eager to help.", "hi": "अत्यधिक देखभाल करने वाले, सामाजिक और लोकप्रिय लोग, जो हमेशा मदद के लिए उत्सुक रहते हैं।" }, "desc": { "en": "Consuls are warm-hearted, conscientious, and cooperative. They are social butterflies who enjoy helping others and creating a sense of community.", "hi": "परामर्शदाता गर्मजोशी से भरे, ईमानदार और सहयोगी होते हैं। वे सामाजिक होते हैं और दूसरों की मदद करने और समुदाय की भावना पैदा करने में आनंद लेते हैं।" }, "chars": { "en": ["Caring", "Sociable", "Organized", "Harmonious"], "hi": ["देखभाल करने वाले", "मिलनसार", "संगठित", "सामंजस्यपूर्ण"] } },
+        "ENFJ": { "title": { "en": "The Protagonist", "hi": "नायक" }, "tagline": { "en": "Charismatic and inspiring leaders, able to mesmerize their listeners.", "hi": "करिश्माई और प्रेरणादायक नेता, जो अपने श्रोताओं को मंत्रमुग्ध कर सकते हैं।" }, "desc": { "en": "Protagonists are passionate, altruistic, and inspiring. They are natural-born leaders who are driven to help others realize their full potential.", "hi": "नायक भावुक, परोपकारी और प्रेरणादायक होते हैं। वे जन्मजात नेता होते हैं जो दूसरों को उनकी पूरी क्षमता का एहसास कराने में मदद करते हैं।" }, "chars": { "en": ["Charismatic", "Inspiring", "Empathetic", "Passionate"], "hi": ["करिश्माई", "प्रेरणादायक", "सहानुभूतिपूर्ण", "भावुक"] } },
+        "ENTJ": { "title": { "en": "The Commander", "hi": "सेनापति" }, "tagline": { "en": "Bold, imaginative and strong-willed leaders, always finding a way – or making one.", "hi": "साहसी, कल्पनाशील और मजबूत इच्छाशक्ति वाले नेता, जो हमेशा एक रास्ता खोजते हैं - या बनाते हैं।" }, "desc": { "en": "Commanders are strategic, ambitious, and confident. They are natural leaders who are driven to achieve their goals and are skilled at inspiring others to follow them.", "hi": "सेनापति रणनीतिक, महत्वाकांक्षी और आत्मविश्वासी होते हैं। वे जन्मजात नेता होते हैं जो अपने लक्ष्यों को प्राप्त करने और दूसरों को प्रेरित करने में माहिर होते हैं।" }, "chars": { "en": ["Strategic", "Confident", "Decisive", "Ambitious"], "hi": ["रणनीतिक", "आत्मविश्वासी", "निर्णायक", "महत्वाकांक्षी"] } }
+    };
+
+    const questionPool = {
+        EI: [
+            { "trait": "E", "question": { "en": "You feel energized after spending time with a large group of people.", "hi": "बहुत सारे लोगों के साथ समय बिताने के बाद आपको अच्छा और ताज़ा महसूस होता है।" } },
+            { "trait": "I", "question": { "en": "You prefer one-on-one conversations over group activities.", "hi": "आपको ग्रुप में बात करने से ज़्यादा एक व्यक्ति से अकेले में बात करना पसंद है।" } },
+            { "trait": "E", "question": { "en": "You are often the one to initiate conversations.", "hi": "आप अक्सर दूसरों से पहले बातचीत शुरू करते हैं।" } },
+            { "trait": "I", "question": { "en": "You enjoy solitude and need time alone to recharge.", "hi": "आपको अकेले रहना पसंद है और तरोताज़ा होने के लिए अकेले समय की ज़रूरत होती है।" } },
+            { "trait": "E", "question": { "en": "You are outgoing and find it easy to meet new people.", "hi": "आप घुलने-मिलने वाले इंसान हैं और नए लोगों से आसानी से दोस्ती कर लेते हैं।" } },
+            { "trait": "I", "question": { "en": "You tend to think before you speak.", "hi": "आप आमतौर पर बोलने से पहले सोचते हैं।" } },
+            { "trait": "E", "question": { "en": "Being the center of attention doesn't bother you.", "hi": "लोगों का ध्यान आप पर हो, तो आपको इससे कोई परेशानी नहीं होती।" } }
+        ],
+        SN: [
+            { "trait": "S", "question": { "en": "You focus on concrete details and facts rather than abstract ideas.", "hi": "आप बड़ी-बड़ी बातों के बजाय ठोस तथ्यों और विवरणों पर ज़्यादा ध्यान देते हैं।" } },
+            { "trait": "N", "question": { "en": "You are more interested in future possibilities than present realities.", "hi": "आप आज की हकीकत से ज़्यादा भविष्य की संभावनाओं के बारे में सोचते हैं।" } },
+            { "trait": "S", "question": { "en": "You trust experience more than imagination.", "hi": "आप कल्पना से ज़्यादा अनुभव पर भरोसा करते हैं।" } },
+            { "trait": "N", "question": { "en": "You often find yourself lost in thought, exploring new ideas.", "hi": "आप अक्सर नए विचारों को सोचते हुए ख्यालों में खो जाते हैं।" } },
+            { "trait": "S", "question": { "en": "You prefer practical, hands-on learning.", "hi": "आपको किताबी ज्ञान के बजाय काम करके सीखना ज़्यादा पसंद है।" } },
+            { "trait": "N", "question": { "en": "You enjoy discussing theories and abstract concepts.", "hi": "आपको सिद्धांतों और गहरी सोच वाली बातों पर चर्चा करना अच्छा लगता है।" } },
+            { "trait": "S", "question": { "en": "You are observant and notice details others might miss.", "hi": "आप चीज़ों को गौर से देखते हैं और ऐसी छोटी-छोटी बातें भी देख लेते हैं जिन पर दूसरों का ध्यान नहीं जाता।" } }
+        ],
+        TF: [
+            { "trait": "T", "question": { "en": "You make decisions based on logic and objective criteria.", "hi": "आप तर्क और तथ्यों के आधार पर फ़ैसले लेते हैं।" } },
+            { "trait": "F", "question": { "en": "You consider people's feelings before making a decision.", "hi": "आप कोई भी फ़ैसला लेने से पहले लोगों की भावनाओं का ख्याल रखते हैं।" } },
+            { "trait": "T", "question": { "en": "You value truth and fairness over being diplomatic.", "hi": "आप गोलमोल बात करने के बजाय सच्चाई और ईमानदारी को ज़्यादा महत्व देते हैं।" } },
+            { "trait": "F", "question": { "en": "You strive to maintain harmony in your relationships.", "hi": "आप अपने रिश्तों में तालमेल बनाए रखने की कोशिश करते हैं।" } },
+            { "trait": "T", "question": { "en": "You are more convinced by a logical argument than an emotional appeal.", "hi": "आप किसी की भावनात्मक बातों के बजाय तर्क भरी बातों से ज़्यादा सहमत होते हैं।" } },
+            { "trait": "F", "question": { "en": "You are empathetic and can easily put yourself in others' shoes.", "hi": "आप दूसरों का दर्द समझते हैं और खुद को उनकी जगह रखकर सोच सकते हैं।" } },
+            { "trait": "T", "question": { "en": "You believe it's more important to be right than to be liked.", "hi": "आप मानते हैं कि लोगों का पसंदीदा बनने से ज़्यादा ज़रूरी सही होना है।" } },
+            { "trait": "F", "question": { "en": "You find it easy to connect with others on an emotional level.", "hi": "आप आसानी से दूसरों के साथ भावनात्मक रूप से जुड़ जाते हैं।" } }
+        ],
+        JP: [
+            { "trait": "J", "question": { "en": "You prefer to have a clear plan and stick to it.", "hi": "आपको एक पक्की योजना बनाकर उसी के हिसाब से काम करना पसंद है।" } },
+            { "trait": "P", "question": { "en": "You like to keep your options open and enjoy spontaneity.", "hi": "आप कोई भी काम बिना योजना के अचानक करना पसंद करते हैं।" } },
+            { "trait": "J", "question": { "en": "You are organized and like to have things settled.", "hi": "आप व्यवस्थित हैं और चीज़ों को तय करके रखना पसंद करते हैं।" } },
+            { "trait": "P", "question": { "en": "You are adaptable and comfortable with last-minute changes.", "hi": "अगर अचानक कोई बदलाव हो जाए, तो आप आसानी से खुद को ढाल लेते हैं।" } },
+            { "trait": "J", "question": { "en": "You enjoy making to-do lists and checking items off.", "hi": "आपको 'करने वाले कामों की लिस्ट' बनाना और उन्हें पूरा करना अच्छा लगता है।" } },
+            { "trait": "P", "question": { "en": "You often work in bursts of energy, close to deadlines.", "hi": "आप अक्सर काम को आखिरी समय पर पूरे जोश के साथ करते हैं।" } },
+            { "trait": "J", "question": { "en": "You feel a sense of satisfaction from completing tasks.", "hi": "आपको काम पूरा करने के बाद संतुष्टि महसूस होती है।" } },
+            { "trait": "P", "question": { "en": "You prefer a flexible lifestyle over a structured one.", "hi": "आपको बंधे-बंधाए नियमों की बजाय एक लचीली जीवनशैली ज़्यादा पसंद है।" } }
+        ]
+    };
+
+    // --- DOM Elements ---
+    const startScreen = document.getElementById('start-screen');
+    const quizForm = document.getElementById('quizForm');
+    const resultDiv = document.getElementById('result');
+    const resultBtnContainer = document.getElementById('resultBtnContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressContainer = document.querySelector('.progress-container');
+    
+    // --- Event Listeners ---
+    document.getElementById('lang-hi').addEventListener('click', () => setLanguage('hi'));
+    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+    document.querySelectorAll('.test-length-btn').forEach(button => {
+        button.addEventListener('click', () => startQuiz(parseInt(button.dataset.questions)));
+    });
+    document.getElementById('viewResultsBtn').addEventListener('click', calculateResult);
+    document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+    document.getElementById('shareBtn').addEventListener('click', shareOnWhatsApp);
+
+    // --- Core Functions ---
+
+    function updateAllTexts(lang) {
+        document.querySelectorAll('[data-i18n-key]').forEach(el => {
+            const key = el.getAttribute('data-i18n-key');
+            const translation = i18n[lang][key];
+
+            const textSpan = el.querySelector('span[data-i18n-key]');
+            if (textSpan) { // For buttons like "10 Questions"
+                textSpan.textContent = translation;
+            } else if (el.querySelector('svg')) { // For buttons with icons like WhatsApp
+                 el.querySelector('span').textContent = translation;
+            } else if (el.querySelector('strong')) { // For labels with bold text
+                 el.querySelector('strong').textContent = translation;
+            }
+            else {
+                el.textContent = translation;
+            }
+        });
+        
+        document.querySelectorAll('[data-i18n-placeholder-key]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder-key');
+            el.placeholder = i18n[lang][key];
+        });
+        
+        document.title = i18n[lang].page_title;
+    }
+
+    function setLanguage(lang) {
+        if (quizForm.innerHTML !== '' && !confirm(i18n[lang].quiz_in_progress_confirm)) {
+            return;
+        }
+        currentLang = lang;
+        document.documentElement.lang = lang;
+        updateAllTexts(lang);
+        document.getElementById('lang-hi').classList.toggle('active', lang === 'hi');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        resetQuiz();
+    }
+    
+    function resetQuiz() {
+        currentQuestionIndex = 0;
+        TOTAL_QUESTIONS = 0;
+        userResult = {};
+        selectedQuestions = [];
+
+        quizForm.innerHTML = '';
+        progressContainer.style.display = 'none';
+        progressBar.style.width = '0%';
+        progressBar.textContent = '';
+        
+        resultBtnContainer.style.display = 'none';
+        resultDiv.style.display = 'none';
+        startScreen.style.display = 'block';
+
+        document.getElementById('userName').value = '';
+    }
+    
+    function triggerConfetti() {
+        if (typeof confetti === 'undefined') return;
+        let duration = 3 * 1000;
+        let animationEnd = Date.now() + duration;
+        let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        let interval = setInterval(() => {
+            let timeLeft = animationEnd - Date.now();
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+            let particleCount = 50 * (timeLeft / duration);
+            confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+            confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+        }, 250);
+    }
+
+    function startQuiz(numQuestions) {
+        TOTAL_QUESTIONS = numQuestions;
+        currentQuestionIndex = 0;
+        prepareQuiz(numQuestions);
+
+        startScreen.style.display = 'none';
+        quizForm.style.display = 'block';
+        progressContainer.style.display = 'block';
+
+        const firstQuestion = document.querySelector('.question-block');
+        if (firstQuestion) {
+            firstQuestion.classList.add('active');
+        }
+        updateProgressBar();
+    }
+    
+    function prepareQuiz(numQuestions) {
+        selectedQuestions = [];
+        quizForm.innerHTML = ''; 
+        
+        const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
+
+        let counts = {};
+        if (numQuestions === 10) {
+            counts = { EI: 2, SN: 2, TF: 3, JP: 3 };
+        } else if (numQuestions === 20) {
+            counts = { EI: 5, SN: 5, TF: 5, JP: 5 };
+        } else {
+            counts = { EI: 7, SN: 7, TF: 8, JP: 8 };
+        }
+        
+        for (const dim in counts) {
+            const shuffled = shuffleArray([...questionPool[dim]]);
+            selectedQuestions.push(...shuffled.slice(0, counts[dim]));
+        }
+        
+        selectedQuestions = shuffleArray(selectedQuestions);
+        generateQuestionsHTML();
+    }
+
+    function generateQuestionsHTML() {
+        let html = '';
+        const options = i18n[currentLang];
+        const optionKeys = ['option_strongly_agree', 'option_agree', 'option_disagree', 'option_strongly_disagree'];
+        
+        selectedQuestions.forEach((q, index) => {
+            const oppositeTrait = {E:'I', I:'E', S:'N', N:'S', T:'F', F:'T', J:'P', P:'J'}[q.trait];
+            const values = [`${q.trait}:2`, `${q.trait}:1`, `${oppositeTrait}:1`, `${oppositeTrait}:2`];
+            
+            html += `<div class="question-block" id="question-${index}">
+                <p class="question-text">${q.question[currentLang]}</p>
+                <div class="options-grid" data-question-number="${index}">`;
+
+            optionKeys.forEach((key, i) => {
+                html += `
+                    <div>
+                        <input type="radio" id="q${index}_o${i}" name="q${index}" value="${values[i]}" required>
+                        <label for="q${index}_o${i}">${options[key]}</label>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+        });
+        quizForm.innerHTML = html;
+        quizForm.querySelectorAll('.options-grid').forEach(grid => {
+            grid.addEventListener('change', () => handleAnswer(parseInt(grid.dataset.questionNumber)));
+        });
+    }
+    
+    function updateProgressBar() {
+        const percentage = Math.round((currentQuestionIndex / TOTAL_QUESTIONS) * 100);
+        progressBar.style.width = percentage + '%';
+        progressBar.textContent = `${percentage}%`;
+    }
+
+    function handleAnswer(questionNumber) {
+        const currentBlock = document.getElementById(`question-${questionNumber}`);
+        const nextBlock = document.getElementById(`question-${questionNumber + 1}`);
+
+        currentBlock.querySelectorAll('input').forEach(input => { input.disabled = true; });
+        
+        currentQuestionIndex++;
+        updateProgressBar();
+        
+        setTimeout(() => {
+            currentBlock.classList.remove('active');
+            if (nextBlock) {
+                nextBlock.classList.add('active');
+            } else {
+                progressContainer.style.display = 'none';
+                resultBtnContainer.style.display = 'block';
+            }
+        }, 400);
+    }
+
+    function calculateResult() {
+        const answeredQuestions = quizForm.querySelectorAll('input[type="radio"]:checked');
+        if (answeredQuestions.length < TOTAL_QUESTIONS) {
+            alert(i18n[currentLang].incomplete_quiz_alert);
+            return;
+        }
+
+        const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+        
+        answeredQuestions.forEach(input => {
+            const [trait, value] = input.value.split(':');
+            scores[trait] += parseInt(value);
+        });
+        
+        let personalityType = '';
+        personalityType += (scores.E >= scores.I) ? 'E' : 'I';
+        personalityType += (scores.S >= scores.N) ? 'S' : 'N';
+        personalityType += (scores.T >= scores.F) ? 'T' : 'F';
+        personalityType += (scores.J >= scores.P) ? 'J' : 'P';
+        
+        userResult = {
+            type: personalityType,
+            ...personalityTypes[personalityType]
+        };
+        
+        displayResult();
+    }
+
+    function displayResult() {
+        document.getElementById('result-type').textContent = userResult.type;
+        document.getElementById('result-title').textContent = userResult.title[currentLang];
+        document.getElementById('result-tagline').textContent = userResult.tagline[currentLang];
+        document.getElementById('result-desc').textContent = userResult.desc[currentLang];
+
+        let charsHtml = '<ul>';
+        userResult.chars[currentLang].forEach(char => {
+            charsHtml += `<li>${char}</li>`;
+        });
+        charsHtml += '</ul>';
+        document.getElementById('result-chars').innerHTML = charsHtml;
+
+        quizForm.style.display = 'none';
+        resultBtnContainer.style.display = 'none';
+        resultDiv.style.display = 'block';
+        
+        triggerConfetti();
+    }
+
+    function shareOnWhatsApp() {
+        const userName = document.getElementById('userName').value.trim();
+        const introText = currentLang === 'hi'
+            ? (userName ? `${userName} ने व्यक्तित्व परीक्षण दिया!` : 'मैंने व्यक्तित्व परीक्षण दिया!')
+            : (userName ? `${userName} took the personality test!` : 'I took the personality test!');
+
+        const resultText = `My result is: ${userResult.type} - ${userResult.title.en} (${userResult.title.hi}).`;
+        const ctaText = i18n[currentLang].cta_whatsapp || "Find out your personality type too!";
+        const pageUrl = window.location.href;
+        const message = encodeURIComponent(`${introText}\n\n${resultText}\n\n"${userResult.tagline[currentLang]}"\n\n${ctaText}\n${pageUrl}`);
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${message}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    // --- Initialization ---
+    setLanguage('hi'); 
+
+    });
+</script>
+
+</body>
+</html>
+<script type='text/javascript' src='//pl27249063.profitableratecpm.com/17/c0/8b/17c08b623918d4cd370843c01bddfeb0.js'></script>
